@@ -1,0 +1,27 @@
+{
+    "name": "sascha/is-gibberish",
+    "description": "Zero-dependency PHP package for detecting obvious gibberish input using fast heuristics.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "IsGibberish\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IsGibberish\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
