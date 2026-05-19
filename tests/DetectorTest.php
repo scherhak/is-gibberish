@@ -41,6 +41,50 @@ final class DetectorTest extends TestCase
     }
 
     /**
+     * Ensure that the threshold can be overridden for a single analysis call.
+     */
+    public function testItAcceptsPerCallThresholdOverride(): void
+    {
+        $detector = new Detector();
+        $result = $detector->analyze('qwertzuiop', [
+            'threshold' => 55.0,
+        ]);
+
+        self::assertFalse($result->isGibberish());
+        self::assertSame(55.0, $result->threshold());
+        self::assertSame(50.0, $result->score());
+    }
+
+    /**
+     * Ensure that heuristic weights can be overridden for a single call.
+     */
+    public function testItAcceptsPerCallWeightOverrides(): void
+    {
+        $detector = new Detector();
+        $result = $detector->analyze('qwertzuiop', [
+            'weights' => [
+                'keyboard_pattern' => 70.0,
+            ],
+        ]);
+
+        self::assertTrue($result->isGibberish());
+        self::assertSame(70.0, $result->score());
+        self::assertSame(70.0, $result->breakdown()['keyboard_pattern']);
+    }
+
+    /**
+     * Ensure that the boolean API also accepts per-call overrides.
+     */
+    public function testItAcceptsOverridesInBooleanApi(): void
+    {
+        $detector = new Detector();
+
+        self::assertFalse($detector->isGibberish('qwertzuiop', [
+            'threshold' => 55.0,
+        ]));
+    }
+
+    /**
      * Provide sample inputs that should be flagged as gibberish.
      *
      * @return iterable<string, array{0: string}>
@@ -52,6 +96,8 @@ final class DetectorTest extends TestCase
         yield 'repeated characters' => ['aaaaaaaaaa'];
         yield 'keyboard row variant' => ['qwertzuiop'];
         yield 'mixed repetition' => ['12121212'];
+        yield 'short multi token keyboard fragments' => ['sdfa sdfas df sadf asdfas asdf'];
+        yield 'multi token gibberish mix' => ['asdf 24qf waefasdf arg aerg ergeara asdf wq(/)/"$=/§()Q/§($23eafwdfasdk tdzjtdz jdtzj dtghsrghs fgh sfgh sfgh 435q 3warq34 qwe€'];
     }
 
     /**
@@ -66,5 +112,7 @@ final class DetectorTest extends TestCase
         yield 'umlaut text' => ['Straßenüberführung'];
         yield 'accented name' => ['José Alvarez'];
         yield 'real sentence' => ['Bitte rufen Sie mich morgen an.'];
+        yield 'sentence with house number' => ['Bitte liefern Sie an die Musterstraße 24 in Köln.'];
+        yield 'sentence with ticket reference' => ['Meine Bestellnummer ist AB-1234 und die Adresse ist korrekt.'];
     }
 }

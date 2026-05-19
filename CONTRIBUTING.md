@@ -84,8 +84,9 @@ Examples of valid change directions:
 
 - improving keyboard smash detection
 - refining repetition scoring
+- refining multi-token fragment detection
 - improving Unicode handling for legitimate names and words
-- adding configurable thresholds or presets
+- adding configurable thresholds, per-call overrides, or presets
 
 Examples that need extra scrutiny:
 
@@ -98,6 +99,7 @@ Examples that need extra scrutiny:
 - Keep the change focused on one feature or fix
 - Include tests for behavioral changes
 - Update `README.md` if public behavior or API changes
+- Update `README.md` when default thresholds, weights, keyboard rows, or heuristics change
 - Explain what changed and how it was tested
 
 Useful PR description points:
@@ -115,5 +117,6 @@ Useful PR description points:
 ## Notes
 
 - If you touch scoring or thresholds, verify both positive and negative examples.
+- If you add or change configurability, cover both constructor-based config and per-call overrides where applicable.
 - If you expand Unicode handling, keep the implementation portable and lightweight.
 - If you add configurability, preserve the simple default experience.

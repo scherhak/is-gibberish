@@ -1,5 +1,5 @@
 {
-    "name": "sascha/is-gibberish",
+    "name": "scherhak/is-gibberish",
     "description": "Zero-dependency PHP package for detecting obvious gibberish input using fast heuristics.",
     "type": "library",
     "license": "MIT",

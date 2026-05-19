@@ -40,6 +40,7 @@ final readonly class DetectorConfig
                 'keyboard_pattern' => 50.0,
                 'vowel_consonant_balance' => 20.0,
                 'character_distribution' => 20.0,
+                'token_pattern' => 35.0,
             ],
         );
     }
@@ -58,6 +59,16 @@ final readonly class DetectorConfig
     public function weight(string $heuristicName, float $fallback = 0.0): float
     {
         return $this->weights[$heuristicName] ?? $fallback;
+    }
+
+    /**
+     * Get all configured heuristic weights.
+     *
+     * @return array<string, float>
+     */
+    public function weights(): array
+    {
+        return $this->weights;
     }
 
     /**
@@ -86,5 +97,25 @@ final readonly class DetectorConfig
     public function withWeights(array $weights): self
     {
         return new self($this->threshold, $weights, $this->keyboardRows);
+    }
+
+    /**
+     * Return a cloned configuration with a merged set of heuristic weights.
+     *
+     * @param array<string, float> $weights
+     */
+    public function withMergedWeights(array $weights): self
+    {
+        return new self($this->threshold, [...$this->weights, ...$weights], $this->keyboardRows);
+    }
+
+    /**
+     * Return a cloned configuration with different keyboard rows.
+     *
+     * @param list<string> $keyboardRows
+     */
+    public function withKeyboardRows(array $keyboardRows): self
+    {
+        return new self($this->threshold, $this->weights, $keyboardRows);
     }
 }
