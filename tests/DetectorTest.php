@@ -97,6 +97,7 @@ final class DetectorTest extends TestCase
         yield 'keyboard row variant' => ['qwertzuiop'];
         yield 'mixed repetition' => ['12121212'];
         yield 'short multi token keyboard fragments' => ['sdfa sdfas df sadf asdfas asdf'];
+        yield 'issue 2 keyboard fragments mixed with short tokens' => ['asdf 24qf waefasdf arg aerg ergeara asd'];
         yield 'multi token gibberish mix' => ['asdf 24qf waefasdf arg aerg ergeara asdf wq(/)/"$=/§()Q/§($23eafwdfasdk tdzjtdz jdtzj dtghsrghs fgh sfgh sfgh 435q 3warq34 qwe€'];
     }
 
@@ -114,5 +115,8 @@ final class DetectorTest extends TestCase
         yield 'real sentence' => ['Bitte rufen Sie mich morgen an.'];
         yield 'sentence with house number' => ['Bitte liefern Sie an die Musterstraße 24 in Köln.'];
         yield 'sentence with ticket reference' => ['Meine Bestellnummer ist AB-1234 und die Adresse ist korrekt.'];
+        yield 'sentence with keyboard fragment and reference' => ['Bitte asdf und 24qf prüfen.'];
+        yield 'sentence discussing two keyboard sequences' => ['Bitte asdf, qwert und asd im Beispiel prüfen.'];
+        yield 'sentence quoting the same keyboard sequence twice' => ['Bitte asdf, asdf und asd prüfen.'];
     }
 }

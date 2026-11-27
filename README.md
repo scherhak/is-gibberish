@@ -145,7 +145,7 @@ Default configuration:
 - Keyboard row patterns such as `asdfghjkl` and `qwertzuiop`
 - Vowel to consonant imbalance
 - Unnatural character-class distribution
-- Suspicious multi-token fragment patterns
+- Suspicious multi-token fragment patterns, including repeated keyboard-row sequences across several tokens
 
 ## 🛠️ Development
 

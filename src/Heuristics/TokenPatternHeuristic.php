@@ -62,6 +62,10 @@ final class TokenPatternHeuristic implements HeuristicInterface
             return new HeuristicResult($weight, ['Most token fragments look structurally implausible.']);
         }
 
+        if ($ratio >= 0.4 && $this->hasRepeatedKeyboardFragments($substantiveTokens, $config)) {
+            return new HeuristicResult($weight, ['Multiple tokens contain keyboard-row fragments.']);
+        }
+
         if ($ratio >= 0.5) {
             return new HeuristicResult($weight * 0.7, ['Many token fragments look structurally implausible.']);
         }
@@ -153,11 +157,11 @@ final class TokenPatternHeuristic implements HeuristicInterface
     private function containsKeyboardRun(string $letters, DetectorConfig $config): bool
     {
         foreach ($config->keyboardRows() as $row) {
-            if ($this->longestContainedRun($letters, $row) >= 3) {
+            if ($this->containsRun($letters, $row)) {
                 return true;
             }
 
-            if ($this->longestContainedRun($letters, strrev($row)) >= 3) {
+            if ($this->containsRun($letters, strrev($row))) {
                 return true;
             }
         }
@@ -166,20 +170,51 @@ final class TokenPatternHeuristic implements HeuristicInterface
     }
 
     /**
-     * Determine the longest substring from the input that appears in a keyboard row.
+     * Require keyboard fragments in three tokens, with a longer run shared by two of them.
+     *
+     * @param list<string> $tokens
      */
-    private function longestContainedRun(string $needle, string $haystack): int
+    private function hasRepeatedKeyboardFragments(array $tokens, DetectorConfig $config): bool
     {
-        $max = min(strlen($needle), strlen($haystack));
+        $keyboardTokens = array_values(array_filter(
+            array_map(Unicode::lower(...), $tokens),
+            fn (string $token): bool => $this->containsKeyboardRun($token, $config),
+        ));
 
-        for ($length = $max; $length >= 3; $length--) {
-            for ($offset = 0; $offset <= strlen($needle) - $length; $offset++) {
-                if (str_contains($haystack, substr($needle, $offset, $length))) {
-                    return $length;
+        if (count($keyboardTokens) < 3) {
+            return false;
+        }
+
+        foreach ($config->keyboardRows() as $row) {
+            for ($offset = 0; $offset <= strlen($row) - 4; $offset++) {
+                $fragment = substr($row, $offset, 4);
+                foreach ([$fragment, strrev($fragment)] as $run) {
+                    $matches = array_filter(
+                        $keyboardTokens,
+                        static fn (string $token): bool => str_contains($token, $run),
+                    );
+
+                    if (count($matches) >= 2) {
+                        return true;
+                    }
                 }
             }
         }
 
-        return 0;
+        return false;
+    }
+
+    /**
+     * Check whether the input contains a consecutive run from a keyboard row.
+     */
+    private function containsRun(string $input, string $row): bool
+    {
+        for ($offset = 0; $offset <= strlen($input) - 3; $offset++) {
+            if (str_contains($row, substr($input, $offset, 3))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
